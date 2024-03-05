@@ -8,7 +8,7 @@ public class custom_exception {
 
     private static void validateAge(int age) throws age_custom_e{
         if (age < 0){
-            throw new age_custom_e();
+            throw new age_custom_e("Age cannot be negative", new RuntimeException());
         }
     }
 
