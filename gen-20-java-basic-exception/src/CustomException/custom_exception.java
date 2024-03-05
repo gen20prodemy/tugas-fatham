@@ -12,15 +12,13 @@ public class custom_exception {
             validateAge(age);
         } catch (NumberFormatException e){
             System.err.println("Input harus berupa angka.");
-        } catch (age_custom_e e){
-            System.err.println(e.getMessage());
         }
 
     }
 
     private static void validateAge(int age) throws age_custom_e{//exception negative age
         if (age < 0){
-            throw new age_custom_e("Age cannot be negative");
+            throw new age_custom_e("Age cannot be negative", new RuntimeException());
         }
         else {
             System.out.println("Umur anda: "+age);
