@@ -16,7 +16,7 @@ public class array_exception {
         try{
             System.out.printf("index ke-%d, adalah %d\n", index, array[index]);
         } catch(ArrayIndexOutOfBoundsException e){//exception spesific out of bound index
-            System.out.printf("Indeks ke-%d di luar batas untuk panjang array : 4\n", index);
+            System.err.printf("Indeks ke- %d di luar batas untuk panjang array : 4\n", index);
         } finally {
             System.out.println("Finally dijalankan");
         }
