@@ -22,10 +22,11 @@ public class Main_collection {
         for (int i = 0; i < dataList.size(); i++) {
             try {
                 System.out.print("Masukkan id untuk nama \"" + dataList.get(i) + "\": ");
-                int key = scanner.nextInt();
+                int key = scanner.nextInt();//user input dimasukkan kedalam variabel
+                scanner.nextLine();//bersihkan buffer input
                 dataMap.put(key, dataList.get(i));//Menambahkan id(key) kedalam dataList menggunakan hashmap
             } catch (InputMismatchException e){//Exception jika user input non integer
-                System.err.println("Input id harus berupa bilangan bulat");
+                System.err.println("\nInput id harus berupa bilangan bulat");
                 scanner.nextLine();
             }
         }
@@ -59,7 +60,7 @@ public class Main_collection {
                 System.out.println("Data dengan ID " + key + " tidak ditemukan.");
             }
         } catch (InputMismatchException e){//Exception jika user input non integer
-            System.err.println("Input id harus berupa bilangan bulat");
+            System.err.println("\nInput id harus berupa bilangan bulat");
             scanner.nextLine();
         }
     }
@@ -77,26 +78,26 @@ public class Main_collection {
     public void handleUserInput(int choice) {
         switch (choice) {
             case 1:
-                addDataToListWithQ();
+                addDataToListWithQ();//memanggil method add data (nama)
                 break;
             case 2:
-                convertListToMap();
+                convertListToMap();//Memanggil method covert list to map (menambahkan id ke data nama)
                 break;
             case 3:
-                displayDataList();
+                displayDataList();//memanggil method menampilkan data dalam list
                 break;
             case 4:
-                displayDataMap();
+                displayDataMap();//memanggil method menampilan data dalam map (id, nama)
                 break;
             case 5:
-                displayDataByKey();
+                displayDataByKey();//memanggil method untuk menampilkan data nama berdasarkan id (key) pada map
                 break;
             case 6:
                 System.out.println("Program selesai");
                 scanner.close();
                 System.exit(0);
             default:
-                System.out.println("Pilihan tidak valid.");
+                System.out.println("Pilihan tidak tersedia");
         }
     }
 
@@ -119,7 +120,7 @@ public class Main_collection {
 
         while (true) {
             try {
-                data1.displayMenu();
+                data1.displayMenu();//memanggil method display menu
                 System.out.print("Masukkan pilihan: ");
                 int choice = data1.scanner.nextInt();// user input menu
                 data1.scanner.nextLine();//membersihkan buffer input
