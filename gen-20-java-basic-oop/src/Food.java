@@ -4,9 +4,19 @@ public class Food extends Product{
         super(name, exp, price);
     }
 
+    public String getName(){
+        return name;
+    }
+
+    public String getExp(){
+        return exp;
+    }
+
     @Override
     public double getPrice(){
         return price;
     }
+
+
 
 }
