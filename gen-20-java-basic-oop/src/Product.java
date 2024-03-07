@@ -1,3 +1,4 @@
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Product {
@@ -34,14 +35,14 @@ public class Product {
 
     public static Product inputProduct(Scanner scanner){
 
-        System.out.println("Masukkan informasi product:");
+        System.out.println("\nMasukkan informasi product:");
         System.out.print("Nama Product : ");
         String productName = scanner.nextLine();
 
         System.out.print("Tanggal Expired : ");
         String productExp = scanner.nextLine();
 
-        System.out.print("Harga : ");
+        System.out.print("Harga (Bilangan Bulat) : ");
         double productPrice = scanner.nextDouble();
         scanner.nextLine();
 
