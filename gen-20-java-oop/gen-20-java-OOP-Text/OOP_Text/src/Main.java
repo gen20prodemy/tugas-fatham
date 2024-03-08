@@ -2,14 +2,45 @@ import java.io.*;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-abstract class CRUD {
-    abstract void create(File file, Scanner scanner) throws IOException;
-    abstract void read(File file) throws IOException;
-    abstract void update(File file, Scanner scanner) throws IOException;
-    abstract void delete(File file, Scanner scanner) throws IOException;
+class Siswa {
+    private int id;
+    private String name;
+
+    public Siswa (int id){
+        this.id = id;
+    }
+
+    public Siswa (int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return id + "," + name;
+    }
 }
 
-class FileCRUD extends CRUD {
+interface CRUD {
+    void create(File file, Scanner scanner) throws IOException;
+    void read(File file) throws IOException;
+    void update(File file, Scanner scanner) throws IOException;
+    void delete(File file, Scanner scanner) throws IOException;
+}
+
+class FileCRUD implements CRUD {
 
     @Override
     public void create(File file, Scanner scanner) throws IOException {
@@ -191,7 +222,6 @@ public class Main {
                 scanner.nextLine();
             } catch (IOException e) {
                 System.err.println("Error: " + e.getMessage());
-                scanner.nextLine();
             }
         }
     }
