@@ -1,4 +1,6 @@
-class Siswa {
+package siswaPackage;
+
+public class Siswa {
     private int id;
     private String name;
 

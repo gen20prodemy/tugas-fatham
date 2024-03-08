@@ -1,15 +1,11 @@
+package crudPackage;
+
+import siswaPackage.Siswa;
+
 import java.io.*;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
-abstract class CRUD {
-    abstract void create(File file, Scanner scanner) throws IOException;
-    abstract void read(File file) throws IOException;
-    abstract void update(File file, Scanner scanner) throws IOException;
-    abstract void delete(File file, Scanner scanner) throws IOException;
-}
-
-class FileCRUD extends CRUD {
+public class FileCRUD extends CRUD {
 
     @Override
     public void create(File file, Scanner scanner) throws IOException {
@@ -33,12 +29,16 @@ class FileCRUD extends CRUD {
 
     @Override
     public void read(File file) throws IOException {
-        System.out.println("Data in the File:");
         BufferedReader reader = new BufferedReader(new FileReader(file));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            String[] parts = line.split(",");
-            System.out.println("ID: " + parts[0] + ", Name: " + parts[1]);
+        String line = reader.readLine();//Membaca baris pertama
+        if (line == null){
+            System.out.println("Data kosong.");
+        }else{
+            System.out.println("Data dalam file :");
+            do{
+                String[] parts = line.split(",");
+                System.out.println("ID: " + parts[0] + ", Name: " + parts[1]);
+            }while ((line = reader.readLine()) != null);
         }
         reader.close();
     }
@@ -144,56 +144,3 @@ class FileCRUD extends CRUD {
         }
     }
 }
-
-public class Main {
-    public static void main(String[] args) {
-
-        Scanner scanner = new Scanner(System.in);
-        File file = new File("Siswa.txt");
-        CRUD crud = new FileCRUD();
-
-        while (true) {
-            try {
-                System.out.println("\nMenu:");
-                System.out.println("1. Create");
-                System.out.println("2. Read");
-                System.out.println("3. Update");
-                System.out.println("4. Delete");
-                System.out.println("5. Exit");
-                System.out.print("Choose operation: ");
-                int choice = scanner.nextInt();
-                scanner.nextLine();
-
-                switch (choice) {
-                    case 1:
-                        crud.create(file, scanner);
-                        break;
-                    case 2:
-                        crud.read(file);
-                        break;
-                    case 3:
-                        crud.update(file, scanner);
-                        break;
-                    case 4:
-                        crud.delete(file, scanner);
-                        break;
-                    case 5:
-                        System.out.println("Program Selesai.");
-                        scanner.close();
-                        System.exit(0);
-                        break;
-                    default:
-                        System.out.println("Invalid choice.");
-                        break;
-                }
-            } catch (InputMismatchException e) {
-                System.err.println("Error: Masukkan pilihan menu dalam bilangan bulat");
-                scanner.nextLine();
-            } catch (IOException e) {
-                System.err.println("Error: " + e.getMessage());
-                scanner.nextLine();
-            }
-        }
-    }
-}
-
