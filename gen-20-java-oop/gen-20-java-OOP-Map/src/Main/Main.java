@@ -1,8 +1,8 @@
 package Main;
 
-import Interface.CRUD;
-import Interface.MapCRUD;
-import Product.Product;
+import Interface.CRUD;//Import CRUD from package Interface
+import Interface.MapCRUD;//Import MapCRUD from package Interface
+import Product.Product;//Import Product from package Product
 
 import java.util.HashMap;
 import java.util.InputMismatchException;
@@ -12,9 +12,9 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
-        Map<Integer, Product> map = new HashMap<>();
-        CRUD crud = new MapCRUD();
+        Scanner scanner = new Scanner(System.in);//Obj scanner for input user
+        Map<Integer, Product> map = new HashMap<>();//obj dari Hash Map dengan Map sebagai riferensi dan <int(key), Product>
+        CRUD crud = new MapCRUD();//Polimorfisme, membuat obj dari MapCRUD Class dengan riferensi(tipe) CRUD class
 
         while (true) {
             try {
@@ -30,27 +30,27 @@ public class Main {
 
                 switch (choice) {
                     case 1:
-                        crud.create(map, scanner);
+                        crud.create(map, scanner);//call method create from obj crud
                         break;
                     case 2:
-                        crud.read(map);
+                        crud.read(map);//call method read from obj crud
                         break;
                     case 3:
-                        crud.update(map, scanner);
+                        crud.update(map, scanner);//call method update from obj crud
                         break;
                     case 4:
-                        crud.delete(map, scanner);
+                        crud.delete(map, scanner);//call method delete from obj crud
                         break;
                     case 5:
                         System.out.println("Program Selesai.");
                         scanner.close();
-                        System.exit(0);
+                        System.exit(0);//system exit
                         break;
                     default:
                         System.out.println("Invalid choice.");
                         break;
                 }
-            } catch (InputMismatchException e) {
+            } catch (InputMismatchException e) {//Exception for missmatch input
                 System.err.println("Error: Masukkan pilihan menu dalam bilangan bulat");
                 scanner.nextLine();
             }

@@ -1,7 +1,7 @@
 package mainPackage;
 
-import crudPackage.CRUD;
-import crudPackage.FileCRUD;
+import crudPackage.CRUD;//Import abstract CRUD form crudPackage
+import crudPackage.FileCRUD;//import FileCRUD (child class CRUD) from crudPackage
 
 import java.io.*;
 import java.util.InputMismatchException;
@@ -11,8 +11,8 @@ public class Main {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
-        File file = new File("Siswa.txt");
-        CRUD crud = new FileCRUD();
+        File file = new File("Siswa.txt");//Make file with pathname Siswa
+        CRUD crud = new FileCRUD();//Polimorfisme, membuat obj dari FileCRUD Class dengan riferensi(tipe) CRUD class
 
         while (true) {
             try {
@@ -28,16 +28,16 @@ public class Main {
 
                 switch (choice) {
                     case 1:
-                        crud.create(file, scanner);
+                        crud.create(file, scanner);//call method create from obj crud
                         break;
                     case 2:
-                        crud.read(file);
+                        crud.read(file);//call method read from obj crud
                         break;
                     case 3:
-                        crud.update(file, scanner);
+                        crud.update(file, scanner);//call method update from obj crud
                         break;
                     case 4:
-                        crud.delete(file, scanner);
+                        crud.delete(file, scanner);//call method delete from obj crud
                         break;
                     case 5:
                         System.out.println("Program Selesai.");
@@ -48,10 +48,10 @@ public class Main {
                         System.out.println("Invalid choice.");
                         break;
                 }
-            } catch (InputMismatchException e) {
+            } catch (InputMismatchException e) {//Exception for missmatch input
                 System.err.println("Error: Masukkan pilihan menu dalam bilangan bulat");
                 scanner.nextLine();
-            } catch (IOException e) {
+            } catch (IOException e) {//exception for IO, for example file does not exist when use method read, update, or delete
                 System.err.println("Error: " + e.getMessage());
                 scanner.nextLine();
             }
