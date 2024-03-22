@@ -1,5 +1,8 @@
 package com.jpa.jpa.dto;
 
+import com.jpa.jpa.entity.NewProduct;
+import com.jpa.jpa.entity.Product;
+
 public class NewProductReq {
     private String stdname2;
     private int stdprice2;
@@ -26,5 +29,13 @@ public class NewProductReq {
 
     public void setStdprice2(int stdprice2) {
         this.stdprice2 = stdprice2;
+    }
+
+    public NewProduct toEntity(){
+        NewProduct newProduct = new NewProduct();
+        newProduct.setStdname2(stdname2);
+        newProduct.setStdprice2(stdprice2);
+        return newProduct;
+
     }
 }

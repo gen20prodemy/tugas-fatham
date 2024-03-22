@@ -18,13 +18,13 @@ public class NewProductService {
         return newProductRepo.findAllUsingNativeQuery();
     }
 
-    public Optional<NewProduct> getNewProductById(int id){
-        return newProductRepo.findById(id);
+    public void insertNewProduct(NewProduct newProduct) {
     }
 
     //JPQL
     public List<NewProduct> getAllUsingJPA(){
         return  newProductRepo.getAllNewProductJPQL();
     }
+
 
 }
