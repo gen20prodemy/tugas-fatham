@@ -41,4 +41,14 @@ public class CategoryController {
         return categoryService.createRedis(categoryReq);
     }
 
+    @GetMapping("/update/redis")
+    public String updateRedisData(){
+        try {
+            categoryService.updateRedisData();
+            return "Data Redis berhasil diperbarui";
+        } catch (Exception e) {
+            return "Gagal memperbarui data Redis: " + e.getMessage();
+        }
+    }
+
 }

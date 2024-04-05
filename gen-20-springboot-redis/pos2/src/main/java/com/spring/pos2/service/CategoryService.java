@@ -46,7 +46,8 @@ public class CategoryService {
     public CategoryReq create(CategoryReq categoryReq){
         Category category = new Category(categoryReq.getCategoryId(), categoryReq.getCategoryName());
         category = categoryRepo.save(category);//Simpan ke database
-        redisTemplate.opsForValue().set(String.valueOf(categoryReq.getCategoryId()), categoryReq);//Simpan ke redis
+        String redisKey = "category:"+ category.getCategoryId();
+        redisTemplate.opsForValue().set(redisKey, category);//Simpan ke redis
         return new CategoryReq(category.getCategoryId(), category.getCategoryName());
     }
 
@@ -54,10 +55,6 @@ public class CategoryService {
         String redisKey = "category:"+ categoryReq.getCategoryId();
         redisTemplate.opsForValue().set(redisKey, categoryReq);
         return categoryReq;
-    }
-
-    public void saveToRedis(Object data) {
-        redisTemplate.opsForValue().set("myKey", data);
     }
 
     public List<CategoryReq> getAllCategories() {
@@ -107,5 +104,34 @@ public class CategoryService {
 
         System.out.println("Data Kategori berhasil diambil dari Redis");
         return categories;
+    }
+
+    public void updateRedisData() throws JsonProcessingException {
+        // Ambil data dari database
+        List<Category> categories = categoryRepo.findAll();
+
+        // Konversi List<Category> menjadi List<CategoryReq>
+        List<CategoryReq> categoryReqs = categories.stream()
+                .map(category -> new CategoryReq(category.getCategoryId(), category.getCategoryName()))
+                .collect(Collectors.toList());
+
+        // Konversi List<CategoryReq> menjadi List<String> JSON
+        List<String> categoriesJson = categoryReqs.stream()
+                .map(categoryReq -> {
+                    try {
+                        return objectMapper.writeValueAsString(categoryReq);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException("Gagal mengonversi CategoryReq ke JSON: " + e.getMessage());
+                    }
+                })
+                .collect(Collectors.toList());
+
+        // Hapus data lama dari Redis
+        redisTemplate.delete("myKey");
+
+        // Simpan data baru ke dalam Redis
+        redisTemplate.opsForList().rightPushAll("myKey", categoriesJson);
+
+        System.out.println("Data Kategori di Redis berhasil diperbarui");
     }
 }
