@@ -1,5 +1,8 @@
 package com.spring.pos2.service;
 
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.pos2.dto.CategoryReq;
 import com.spring.pos2.entity.Category;
 import com.spring.pos2.repository.CategoryRepo;
@@ -17,11 +20,16 @@ import java.util.stream.Collectors;
 @Service
 public class CategoryService {
 
-    @Autowired
     private CategoryRepo categoryRepo;
+    private RedisTemplate redisTemplate;
+    private ObjectMapper objectMapper;
 
-    @Resource
-    private RedisTemplate<String, CategoryReq> redisTemplate;
+    @Autowired
+    public CategoryService(CategoryRepo categoryRepo, RedisTemplate redisTemplate, ObjectMapper objectMapper){
+        this.categoryRepo = categoryRepo;
+        this.redisTemplate = redisTemplate;
+        this.objectMapper = objectMapper;
+    }
 
     public List<CategoryReq> findAll(){
         List<Category> categories = categoryRepo.findAll();
@@ -30,18 +38,6 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-//    public List<CategoryReq> findAll(){
-//        List<CategoryReq> categoryReqs = (List<CategoryReq>) redisTemplate.opsForValue().get("AllCategory");
-//        if(categoryReqs == null){
-//            categoryReqs = categoryRepo.findAll();
-//            redisTemplate.opsForValue().set("AllCategory", categoryReqs);
-//        }
-//        return categoryReqs.stream()
-//                .map(category -> new CategoryReq(category.getCategoryId(), category.getCategoryName()))
-//                .collect(Collectors.toList());
-//    }
-
-
     public Optional<CategoryReq> findById(Long id){
         Optional<Category> categoryOptional = categoryRepo.findById(id);
         return categoryOptional.map(category -> new CategoryReq(category.getCategoryId(), category.getCategoryName()));
@@ -49,24 +45,64 @@ public class CategoryService {
 
     public CategoryReq create(CategoryReq categoryReq){
         Category category = new Category(categoryReq.getCategoryId(), categoryReq.getCategoryName());
-        category = categoryRepo.save(category);
+        category = categoryRepo.save(category);//Simpan ke database
+        redisTemplate.opsForValue().set(String.valueOf(categoryReq.getCategoryId()), categoryReq);//Simpan ke redis
         return new CategoryReq(category.getCategoryId(), category.getCategoryName());
     }
 
     public CategoryReq createRedis(CategoryReq categoryReq){
         String redisKey = "category:"+ categoryReq.getCategoryId();
-        redisTemplate.opsForValue().set(redisKey, categoryReq, 1000);
+        redisTemplate.opsForValue().set(redisKey, categoryReq);
         return categoryReq;
     }
 
-    public List<CategoryReq> findAllRedis(){
-        List<CategoryReq> categories = new ArrayList<>();
+    public void saveToRedis(Object data) {
+        redisTemplate.opsForValue().set("myKey", data);
+    }
 
-        Set<String> keys = redisTemplate.keys("category:*");
+    public List<CategoryReq> getAllCategories() {
+        List<Category> categories = categoryRepo.findAll(); // Mendapatkan semua data dari repository
 
-        for (String key : keys){
-            CategoryReq categoryReq = redisTemplate.opsForValue().get(key);
-            categories.add(categoryReq);
+        // Konversi List<Category> menjadi List<CategoryReq>
+        List<CategoryReq> categoryReqs = categories.stream()
+                .map(category -> new CategoryReq(category.getCategoryId(), category.getCategoryName()))
+                .collect(Collectors.toList());
+
+        return categoryReqs;
+    }
+
+    public List<CategoryReq> findAllRedis() throws JsonProcessingException {
+        List<CategoryReq> categories;
+        List<String> categoriesJson = redisTemplate.opsForList().range("myKey", 0, -1);
+
+        if(categoriesJson.isEmpty()){
+            // Ambil data dari database jika Redis kosong
+            categories = getAllCategories();
+            // Konversi List<CategoryReq> menjadi List<String> JSON
+            List<String> categoriesJsonList = categories.stream()
+                    .map(categoryReq -> {
+                        try {
+                            return objectMapper.writeValueAsString(categoryReq);
+                        } catch (JsonProcessingException e) {
+                            throw new RuntimeException("Gagal mengonversi CategoryReq ke JSON: " + e.getMessage());
+                        }
+                    })
+                    .collect(Collectors.toList());
+
+            // Simpan data ke Redis dalam bentuk JSON
+            redisTemplate.opsForList().rightPushAll("myKey", categoriesJsonList);
+
+        }else{
+            categories = categoriesJson.stream()
+                    .map(json->{
+                            try{
+                                return objectMapper.readValue(json, CategoryReq.class);
+                            }catch (JsonProcessingException e){
+                                throw new RuntimeException("Gagal mengkonversi JSON ke CategoryReq" + e.getMessage());
+                            }
+
+                    })
+                    .collect(Collectors.toList());
         }
 
         System.out.println("Data Kategori berhasil diambil dari Redis");

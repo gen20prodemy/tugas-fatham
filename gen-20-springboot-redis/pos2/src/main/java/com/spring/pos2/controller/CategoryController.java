@@ -1,5 +1,6 @@
 package com.spring.pos2.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.spring.pos2.dto.CategoryReq;
 import com.spring.pos2.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class CategoryController {
     }
 
     @GetMapping("/all/redis")
-    public List<CategoryReq> getAllCategoriesRedis(){
+    public List<CategoryReq> getAllCategoriesRedis() throws JsonProcessingException {
         return categoryService.findAllRedis();
     }
 
